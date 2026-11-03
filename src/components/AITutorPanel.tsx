@@ -12,6 +12,8 @@ import {
   FileText,
   HelpCircle as QuizIcon,
   Loader2,
+  CornerDownLeft,
+  GraduationCap,
 } from 'lucide-react';
 
 interface AITutorPanelProps {
@@ -35,23 +37,21 @@ export const AITutorPanel: React.FC<AITutorPanelProps> = ({
   const [loading, setLoading] = useState<boolean>(false);
   const [copiedId, setCopiedId] = useState<string | null>(null);
 
-  // Initial welcome message from tutor
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       id: 'welcome',
       role: 'tutor',
-      content: `### 👋 Welcome to ScholarFlow Homework Tutor!
+      content: `### 🎓 ScholarFlow Socratic Assistant
 
-I'm your dedicated homework assistant. Whether you're stuck on a calculus derivative, tackling an organic chemistry mechanism, balancing physics vectors, or refining an essay thesis, I'm here to help you understand the concepts thoroughly.
+Hello! I'm your dedicated homework tutor. Select a mode on the left depending on how you'd like to learn:
 
-**Choose your learning mode above:**
 - **Step-by-Step Breakdown**: Clear sequential derivation with equations and verification.
-- **Socratic Guidance**: I won't give away the solution—I'll guide your thinking with hints!
+- **Socratic Guidance**: I won't give away the solution—I'll guide your thinking with progressive hints!
 - **Concept Explainer**: Everyday analogies and intuitive breakdowns.
 - **Essay & Writing Coach**: Thesis refinement, argumentation structure, and citations.
 - **Quick Practice Quiz**: 3 questions to verify you've mastered the concept.
 
-Select a preset question below or paste your homework problem to begin!`,
+Select a quick starter below or paste any problem from your assignment!`,
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       mode: 'step-by-step',
       subject: 'AP Calculus BC',
@@ -64,12 +64,11 @@ Select a preset question below or paste your homework problem to begin!`,
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, loading]);
 
-  // When activeAssignment prop changes, auto-fill subject and context prompt if provided
   useEffect(() => {
     if (activeAssignment) {
       setSelectedSubject(activeAssignment.subject);
       setQueryInput(
-        `Please help me with my assignment "${activeAssignment.title}": ${activeAssignment.description.slice(0, 150)}...`
+        `Help me solve my assignment "${activeAssignment.title}": ${activeAssignment.description.slice(0, 160)}...`
       );
     }
   }, [activeAssignment]);
@@ -183,9 +182,7 @@ Select a preset question below or paste your homework problem to begin!`,
     setTimeout(() => setCopiedId(null), 2000);
   };
 
-  // Render markdown with clean typography
   const renderFormattedContent = (content: string) => {
-    // Split into paragraphs / headers / code
     const lines = content.split('\n');
     return (
       <div className="space-y-2.5 text-xs sm:text-sm leading-relaxed text-neutral-800 dark:text-neutral-200">
@@ -207,7 +204,7 @@ Select a preset question below or paste your homework problem to begin!`,
           }
           if (trimmed.startsWith('> ')) {
             return (
-              <blockquote key={idx} className="pl-3 py-1 my-1.5 border-l-2 border-indigo-500 text-neutral-600 dark:text-neutral-400 italic bg-neutral-50 dark:bg-neutral-800/40 rounded-r">
+              <blockquote key={idx} className="pl-3 py-1 my-1.5 border-l-2 border-indigo-500 text-neutral-600 dark:text-neutral-400 italic bg-neutral-100/70 dark:bg-neutral-800/50 rounded-r">
                 {trimmed.replace('> ', '')}
               </blockquote>
             );
@@ -240,114 +237,116 @@ Select a preset question below or paste your homework problem to begin!`,
 
   return (
     <div className="flex flex-col lg:flex-row gap-6 items-start">
-      {/* Left Sidebar: Controls, Learning Modes & Quick Prompts */}
-      <div className="w-full lg:w-80 shrink-0 space-y-5">
-        {/* Mode Selector Card */}
-        <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl p-4 shadow-xs">
+      {/* Left Sidebar: Learning Modes, Subject Focus, Starters */}
+      <div className="w-full lg:w-80 shrink-0 space-y-4">
+        {/* Learning Mode Card */}
+        <div className="bg-white dark:bg-neutral-900 border border-neutral-200/90 dark:border-neutral-800 rounded-2xl p-4 shadow-xs">
           <div className="flex items-center justify-between mb-3">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-neutral-500 dark:text-neutral-400">
-              Tutor Learning Mode
-            </h3>
-            <span className="text-[11px] text-indigo-600 dark:text-indigo-400 font-medium">Pedagogy First</span>
+            <span className="text-[11px] font-mono uppercase tracking-wider text-neutral-500 dark:text-neutral-400">
+              Pedagogy Style
+            </span>
+            <span className="text-[10px] text-indigo-600 dark:text-indigo-400 font-semibold font-mono">
+              Active Mode
+            </span>
           </div>
 
           <div className="space-y-1.5">
             <button
               onClick={() => setTutorMode('step-by-step')}
-              className={`w-full text-left px-3 py-2 rounded-lg text-xs transition-colors flex items-center gap-2.5 ${
+              className={`w-full text-left p-2.5 rounded-xl text-xs transition-all flex items-start gap-2.5 ${
                 tutorMode === 'step-by-step'
-                  ? 'bg-indigo-50 dark:bg-indigo-950/70 text-indigo-700 dark:text-indigo-300 font-semibold border border-indigo-200 dark:border-indigo-800'
-                  : 'text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-800'
+                  ? 'bg-neutral-900 text-white dark:bg-white dark:text-neutral-950 font-semibold shadow-xs'
+                  : 'text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800'
               }`}
             >
-              <BookOpen className="w-4 h-4 shrink-0 text-indigo-500" />
+              <BookOpen className="w-4 h-4 shrink-0 mt-0.5" />
               <div>
                 <p className="leading-tight">Step-by-Step Breakdown</p>
-                <p className="text-[10px] text-neutral-500 dark:text-neutral-400 mt-0.5 font-normal">
-                  Detailed sequential mathematical chain
+                <p className={`text-[10px] mt-0.5 font-normal ${tutorMode === 'step-by-step' ? 'opacity-80' : 'text-neutral-500 dark:text-neutral-400'}`}>
+                  Full derivations with equations
                 </p>
               </div>
             </button>
 
             <button
               onClick={() => setTutorMode('socratic')}
-              className={`w-full text-left px-3 py-2 rounded-lg text-xs transition-colors flex items-center gap-2.5 ${
+              className={`w-full text-left p-2.5 rounded-xl text-xs transition-all flex items-start gap-2.5 ${
                 tutorMode === 'socratic'
-                  ? 'bg-indigo-50 dark:bg-indigo-950/70 text-indigo-700 dark:text-indigo-300 font-semibold border border-indigo-200 dark:border-indigo-800'
-                  : 'text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-800'
+                  ? 'bg-neutral-900 text-white dark:bg-white dark:text-neutral-950 font-semibold shadow-xs'
+                  : 'text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800'
               }`}
             >
-              <Lightbulb className="w-4 h-4 shrink-0 text-amber-500" />
+              <Lightbulb className="w-4 h-4 shrink-0 mt-0.5 text-amber-500" />
               <div>
                 <p className="leading-tight">Socratic Guidance (Hints)</p>
-                <p className="text-[10px] text-neutral-500 dark:text-neutral-400 mt-0.5 font-normal">
-                  Guiding questions without spoiling answers
+                <p className={`text-[10px] mt-0.5 font-normal ${tutorMode === 'socratic' ? 'opacity-80' : 'text-neutral-500 dark:text-neutral-400'}`}>
+                  Guiding questions without spoilers
                 </p>
               </div>
             </button>
 
             <button
               onClick={() => setTutorMode('explain')}
-              className={`w-full text-left px-3 py-2 rounded-lg text-xs transition-colors flex items-center gap-2.5 ${
+              className={`w-full text-left p-2.5 rounded-xl text-xs transition-all flex items-start gap-2.5 ${
                 tutorMode === 'explain'
-                  ? 'bg-indigo-50 dark:bg-indigo-950/70 text-indigo-700 dark:text-indigo-300 font-semibold border border-indigo-200 dark:border-indigo-800'
-                  : 'text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-800'
+                  ? 'bg-neutral-900 text-white dark:bg-white dark:text-neutral-950 font-semibold shadow-xs'
+                  : 'text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800'
               }`}
             >
-              <HelpCircle className="w-4 h-4 shrink-0 text-teal-500" />
+              <HelpCircle className="w-4 h-4 shrink-0 mt-0.5 text-teal-500" />
               <div>
                 <p className="leading-tight">Concept Explainer</p>
-                <p className="text-[10px] text-neutral-500 dark:text-neutral-400 mt-0.5 font-normal">
-                  Analogies and intuitive real-world models
+                <p className={`text-[10px] mt-0.5 font-normal ${tutorMode === 'explain' ? 'opacity-80' : 'text-neutral-500 dark:text-neutral-400'}`}>
+                  Analogies & mental models
                 </p>
               </div>
             </button>
 
             <button
               onClick={() => setTutorMode('essay-coach')}
-              className={`w-full text-left px-3 py-2 rounded-lg text-xs transition-colors flex items-center gap-2.5 ${
+              className={`w-full text-left p-2.5 rounded-xl text-xs transition-all flex items-start gap-2.5 ${
                 tutorMode === 'essay-coach'
-                  ? 'bg-indigo-50 dark:bg-indigo-950/70 text-indigo-700 dark:text-indigo-300 font-semibold border border-indigo-200 dark:border-indigo-800'
-                  : 'text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-800'
+                  ? 'bg-neutral-900 text-white dark:bg-white dark:text-neutral-950 font-semibold shadow-xs'
+                  : 'text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800'
               }`}
             >
-              <FileText className="w-4 h-4 shrink-0 text-rose-500" />
+              <FileText className="w-4 h-4 shrink-0 mt-0.5 text-rose-500" />
               <div>
                 <p className="leading-tight">Essay & Writing Coach</p>
-                <p className="text-[10px] text-neutral-500 dark:text-neutral-400 mt-0.5 font-normal">
-                  Thesis polish, argument logic & citations
+                <p className={`text-[10px] mt-0.5 font-normal ${tutorMode === 'essay-coach' ? 'opacity-80' : 'text-neutral-500 dark:text-neutral-400'}`}>
+                  Thesis polish & argumentation
                 </p>
               </div>
             </button>
 
             <button
               onClick={() => setTutorMode('quiz')}
-              className={`w-full text-left px-3 py-2 rounded-lg text-xs transition-colors flex items-center gap-2.5 ${
+              className={`w-full text-left p-2.5 rounded-xl text-xs transition-all flex items-start gap-2.5 ${
                 tutorMode === 'quiz'
-                  ? 'bg-indigo-50 dark:bg-indigo-950/70 text-indigo-700 dark:text-indigo-300 font-semibold border border-indigo-200 dark:border-indigo-800'
-                  : 'text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-800'
+                  ? 'bg-neutral-900 text-white dark:bg-white dark:text-neutral-950 font-semibold shadow-xs'
+                  : 'text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800'
               }`}
             >
-              <QuizIcon className="w-4 h-4 shrink-0 text-sky-500" />
+              <QuizIcon className="w-4 h-4 shrink-0 mt-0.5 text-sky-500" />
               <div>
-                <p className="leading-tight">Knowledge Check Quiz</p>
-                <p className="text-[10px] text-neutral-500 dark:text-neutral-400 mt-0.5 font-normal">
-                  3 diagnostic questions before turning in work
+                <p className="leading-tight">Practice Quiz (3 Qs)</p>
+                <p className={`text-[10px] mt-0.5 font-normal ${tutorMode === 'quiz' ? 'opacity-80' : 'text-neutral-500 dark:text-neutral-400'}`}>
+                  Comprehension check
                 </p>
               </div>
             </button>
           </div>
         </div>
 
-        {/* Subject & Context Selector */}
-        <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl p-4 shadow-xs space-y-3">
-          <label className="block text-xs font-bold uppercase tracking-wider text-neutral-500 dark:text-neutral-400">
-            Subject Focus
+        {/* Subject Focus Selector */}
+        <div className="bg-white dark:bg-neutral-900 border border-neutral-200/90 dark:border-neutral-800 rounded-2xl p-4 shadow-xs space-y-2.5">
+          <label className="block text-[11px] font-mono uppercase tracking-wider text-neutral-500 dark:text-neutral-400">
+            Current Course Context
           </label>
           <select
             value={selectedSubject}
             onChange={(e) => setSelectedSubject(e.target.value)}
-            className="w-full px-3 py-2 text-xs bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg text-neutral-900 dark:text-neutral-100 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+            className="w-full px-3 py-2 text-xs bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-xl text-neutral-900 dark:text-neutral-100 focus:outline-none focus:ring-1 focus:ring-indigo-500 font-medium"
           >
             {subjects.map((sub) => (
               <option key={sub} value={sub}>
@@ -357,13 +356,13 @@ Select a preset question below or paste your homework problem to begin!`,
           </select>
 
           {activeAssignment && (
-            <div className="p-2.5 rounded-lg bg-indigo-50/60 dark:bg-indigo-950/40 border border-indigo-100 dark:border-indigo-900/60 text-xs">
+            <div className="p-3 rounded-xl bg-indigo-50/70 dark:bg-indigo-950/40 border border-indigo-100 dark:border-indigo-900/60 text-xs mt-2">
               <div className="flex items-center justify-between">
-                <span className="font-semibold text-indigo-800 dark:text-indigo-300">Linked Assignment</span>
+                <span className="font-semibold text-indigo-900 dark:text-indigo-300">Linked Assignment</span>
                 {onClearActiveAssignment && (
                   <button
                     onClick={onClearActiveAssignment}
-                    className="text-[11px] text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-300"
+                    className="text-[10px] font-mono text-neutral-500 hover:text-neutral-800 dark:hover:text-neutral-200"
                   >
                     Unlink
                   </button>
@@ -376,11 +375,11 @@ Select a preset question below or paste your homework problem to begin!`,
           )}
         </div>
 
-        {/* Quick Question Starters */}
-        <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl p-4 shadow-xs">
-          <h4 className="text-xs font-bold uppercase tracking-wider text-neutral-500 dark:text-neutral-400 mb-2.5">
-            Quick Starters
-          </h4>
+        {/* Quick Starters */}
+        <div className="bg-white dark:bg-neutral-900 border border-neutral-200/90 dark:border-neutral-800 rounded-2xl p-4 shadow-xs">
+          <span className="text-[11px] font-mono uppercase tracking-wider text-neutral-500 dark:text-neutral-400 block mb-2.5">
+            Quick Prompts
+          </span>
           <div className="space-y-1.5">
             {promptSuggestions.map((item, i) => (
               <button
@@ -390,7 +389,7 @@ Select a preset question below or paste your homework problem to begin!`,
                   setTutorMode(item.mode);
                   handleSendMessage(item.text);
                 }}
-                className="w-full text-left p-2 rounded-lg text-[11px] text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors border border-transparent hover:border-neutral-200 dark:hover:border-neutral-700"
+                className="w-full text-left p-2.5 rounded-xl text-[11px] text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors border border-transparent hover:border-neutral-200 dark:hover:border-neutral-700"
               >
                 <div className="font-semibold text-neutral-900 dark:text-neutral-100">{item.label}</div>
                 <div className="text-neutral-500 dark:text-neutral-400 truncate mt-0.5">{item.text}</div>
@@ -400,22 +399,22 @@ Select a preset question below or paste your homework problem to begin!`,
         </div>
       </div>
 
-      {/* Right Column: Chat Stream & Interactive Input */}
-      <div className="flex-1 w-full bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl shadow-xs flex flex-col h-[700px] overflow-hidden">
+      {/* Right Stream: Discussion View & Interactive Input */}
+      <div className="flex-1 w-full bg-white dark:bg-neutral-900 border border-neutral-200/90 dark:border-neutral-800 rounded-2xl shadow-xs flex flex-col h-[720px] overflow-hidden">
         {/* Tutor Window Header */}
-        <div className="px-5 py-3.5 border-b border-neutral-200 dark:border-neutral-800 flex items-center justify-between bg-neutral-50/60 dark:bg-neutral-900/60">
-          <div className="flex items-center gap-2.5">
-            <div className="w-7 h-7 rounded-lg bg-indigo-600 text-white flex items-center justify-center">
-              <Sparkles className="w-4 h-4" />
+        <div className="px-6 py-4 border-b border-neutral-200/80 dark:border-neutral-800/80 flex items-center justify-between bg-neutral-50/50 dark:bg-neutral-900/40 backdrop-blur-xs">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-xl bg-indigo-600 text-white flex items-center justify-center shadow-xs">
+              <Sparkles className="w-4 h-4 fill-white/20" />
             </div>
             <div>
-              <h3 className="text-xs sm:text-sm font-bold text-neutral-900 dark:text-neutral-100 flex items-center gap-2">
-                <span>ScholarFlow Socratic Assistant</span>
+              <h3 className="text-sm font-bold text-neutral-900 dark:text-neutral-100">
+                Socratic Homework Tutor
               </h3>
-              <div className="text-[11px] text-neutral-500 flex items-center gap-2">
-                <span>Subject: {selectedSubject}</span>
+              <div className="text-[11px] text-neutral-500 flex items-center gap-2 font-mono">
+                <span>{selectedSubject}</span>
                 <span aria-hidden="true">·</span>
-                <span className="capitalize">Mode: {tutorMode.replace('-', ' ')}</span>
+                <span className="capitalize">{tutorMode.replace('-', ' ')}</span>
               </div>
             </div>
           </div>
@@ -433,41 +432,40 @@ Select a preset question below or paste your homework problem to begin!`,
                 },
               ]);
             }}
-            className="flex items-center gap-1.5 px-2.5 py-1 text-xs text-neutral-500 hover:text-neutral-800 dark:hover:text-neutral-200 transition-colors"
+            className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-neutral-500 hover:text-neutral-900 dark:hover:text-neutral-200 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
             title="Reset discussion thread"
           >
             <RotateCcw className="w-3.5 h-3.5" />
-            <span>Reset Thread</span>
+            <span>Clear Thread</span>
           </button>
         </div>
 
         {/* Message Thread */}
-        <div className="flex-1 p-4 sm:p-6 overflow-y-auto space-y-4">
+        <div className="flex-1 p-5 sm:p-6 overflow-y-auto space-y-5">
           {messages.map((message) => {
             const isUser = message.role === 'user';
             return (
               <div
                 key={message.id}
-                className={`flex gap-3 ${isUser ? 'justify-end' : 'justify-start'}`}
+                className={`flex gap-3.5 ${isUser ? 'justify-end' : 'justify-start'}`}
               >
                 {!isUser && (
-                  <div className="w-7 h-7 rounded-lg bg-indigo-100 dark:bg-indigo-950/80 text-indigo-700 dark:text-indigo-300 flex items-center justify-center shrink-0 mt-0.5">
-                    <Sparkles className="w-3.5 h-3.5" />
+                  <div className="w-8 h-8 rounded-xl bg-indigo-50 dark:bg-indigo-950/80 text-indigo-600 dark:text-indigo-400 flex items-center justify-center shrink-0 mt-0.5 border border-indigo-100 dark:border-indigo-900">
+                    <GraduationCap className="w-4 h-4" />
                   </div>
                 )}
 
                 <div
-                  className={`max-w-[85%] sm:max-w-[78%] rounded-xl p-4 shadow-xs relative group ${
+                  className={`max-w-[85%] sm:max-w-[80%] rounded-2xl p-4 sm:p-5 shadow-xs relative group ${
                     isUser
-                      ? 'bg-indigo-600 text-white rounded-br-none'
-                      : 'bg-neutral-50 dark:bg-neutral-800/80 border border-neutral-200 dark:border-neutral-700/70 rounded-bl-none text-neutral-900 dark:text-neutral-100'
+                      ? 'bg-neutral-900 dark:bg-white text-white dark:text-neutral-950 rounded-br-none'
+                      : 'bg-neutral-50/80 dark:bg-neutral-800/60 border border-neutral-200/80 dark:border-neutral-700/60 rounded-bl-none text-neutral-900 dark:text-neutral-100'
                   }`}
                 >
-                  {/* Copy button on tutor responses */}
                   {!isUser && (
                     <button
                       onClick={() => handleCopy(message.content, message.id)}
-                      className="absolute top-3 right-3 p-1 rounded-md text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-200 bg-white/80 dark:bg-neutral-700/80 transition-colors opacity-0 group-hover:opacity-100"
+                      className="absolute top-3 right-3 p-1.5 rounded-lg text-neutral-400 hover:text-neutral-800 dark:hover:text-neutral-200 bg-white/90 dark:bg-neutral-700/80 transition-colors opacity-0 group-hover:opacity-100 border border-neutral-200/50 dark:border-neutral-600/50"
                       title="Copy response"
                     >
                       {copiedId === message.id ? (
@@ -479,14 +477,14 @@ Select a preset question below or paste your homework problem to begin!`,
                   )}
 
                   {isUser ? (
-                    <p className="text-xs sm:text-sm whitespace-pre-wrap leading-relaxed">{message.content}</p>
+                    <p className="text-xs sm:text-sm whitespace-pre-wrap leading-relaxed font-sans">{message.content}</p>
                   ) : (
                     renderFormattedContent(message.content)
                   )}
 
                   <div
-                    className={`mt-2 text-[10px] font-mono ${
-                      isUser ? 'text-indigo-200 text-right' : 'text-neutral-400 text-left'
+                    className={`mt-2.5 text-[10px] font-mono ${
+                      isUser ? 'text-neutral-400 dark:text-neutral-600 text-right' : 'text-neutral-400 text-left'
                     }`}
                   >
                     {message.timestamp}
@@ -497,12 +495,12 @@ Select a preset question below or paste your homework problem to begin!`,
           })}
 
           {loading && (
-            <div className="flex gap-3 items-center text-xs text-neutral-500 dark:text-neutral-400">
-              <div className="w-7 h-7 rounded-lg bg-indigo-100 dark:bg-indigo-950/80 text-indigo-700 dark:text-indigo-300 flex items-center justify-center shrink-0">
-                <Loader2 className="w-3.5 h-3.5 animate-spin" />
+            <div className="flex gap-3.5 items-center text-xs text-neutral-500 dark:text-neutral-400">
+              <div className="w-8 h-8 rounded-xl bg-indigo-50 dark:bg-indigo-950/80 text-indigo-600 dark:text-indigo-400 flex items-center justify-center shrink-0 border border-indigo-100 dark:border-indigo-900">
+                <Loader2 className="w-4 h-4 animate-spin" />
               </div>
-              <div className="p-3 bg-neutral-50 dark:bg-neutral-800/80 border border-neutral-200 dark:border-neutral-700/70 rounded-xl">
-                <span>ScholarFlow tutor is formulating your step-by-step breakdown...</span>
+              <div className="p-3.5 bg-neutral-50/80 dark:bg-neutral-800/60 border border-neutral-200/80 dark:border-neutral-700/60 rounded-2xl">
+                <span>Formulating your Socratic step-by-step breakdown...</span>
               </div>
             </div>
           )}
@@ -511,7 +509,7 @@ Select a preset question below or paste your homework problem to begin!`,
         </div>
 
         {/* Input Bar */}
-        <div className="p-3 sm:p-4 border-t border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900">
+        <div className="p-4 border-t border-neutral-200/80 dark:border-neutral-800/80 bg-white dark:bg-neutral-900">
           <form
             onSubmit={(e) => {
               e.preventDefault();
@@ -525,22 +523,22 @@ Select a preset question below or paste your homework problem to begin!`,
               onChange={(e) => setQueryInput(e.target.value)}
               placeholder={`Ask a question or paste a problem from ${selectedSubject}...`}
               disabled={loading}
-              className="flex-1 px-4 py-2.5 text-xs sm:text-sm bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg text-neutral-900 dark:text-neutral-100 placeholder:text-neutral-400 focus:outline-none focus:ring-1 focus:ring-indigo-500 disabled:opacity-50"
+              className="flex-1 px-4 py-3 text-xs sm:text-sm bg-neutral-50 dark:bg-neutral-800/80 border border-neutral-200 dark:border-neutral-700 rounded-xl text-neutral-900 dark:text-neutral-100 placeholder:text-neutral-400 focus:outline-none focus:ring-1 focus:ring-indigo-500 disabled:opacity-50 transition-all shadow-2xs"
             />
 
             <button
               type="submit"
               disabled={!queryInput.trim() || loading}
-              className="px-4 py-2.5 text-xs sm:text-sm font-semibold rounded-lg bg-indigo-600 hover:bg-indigo-700 disabled:bg-neutral-200 dark:disabled:bg-neutral-800 disabled:text-neutral-400 text-white transition-colors flex items-center gap-1.5 shrink-0"
+              className="px-5 py-3 text-xs sm:text-sm font-semibold rounded-xl bg-neutral-900 dark:bg-white text-white dark:text-neutral-950 hover:bg-neutral-800 dark:hover:bg-neutral-100 disabled:opacity-40 transition-all flex items-center gap-1.5 shrink-0 active:scale-[0.98]"
             >
-              <Send className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">Ask Tutor</span>
+              <span>Ask</span>
+              <CornerDownLeft className="w-3.5 h-3.5" />
             </button>
           </form>
 
-          <div className="mt-2 text-[11px] text-neutral-400 flex items-center justify-between">
-            <span>Powered by Gemini 3.8 Flash homework reasoning</span>
-            <span className="hidden sm:inline">Press Enter to send</span>
+          <div className="mt-2 text-[10px] text-neutral-400 flex items-center justify-between font-mono">
+            <span>Powered by Gemini 3.8 Flash Socratic reasoning</span>
+            <span className="hidden sm:inline">Press Enter to submit</span>
           </div>
         </div>
       </div>

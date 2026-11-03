@@ -1,0 +1,6 @@
+{
+  "name": "ScholarFlow - Student Homework & Study Dashboard",
+  "description": "Comprehensive student homework help dashboard featuring an intelligent Socratic homework assistant, step-by-step problem solver, assignment planner, focus study timer, and flashcard practice.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
